@@ -19,9 +19,12 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import GlobalFooter from '@/components/GlobalFooter';
 import './index.css';
-import menus from '../../../config/menus';
+import { menus } from '../../../config/menus';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/stores';
+import getAccessibleMenus from '@/access/menuAccess';
+import MdEditor from '@/components/MdEditor';
+import MdViewer from '@/components/MdViewer';
 
 
 const SearchInput = () => {
@@ -62,6 +65,10 @@ interface Props {
 export default function BasicLayout({ children }: Props) {
   const pathname = usePathname();
   const loginUser = useSelector((state: RootState) => state.loginUser);
+  
+  const [text,setText] = useState<string>("");
+  
+  
   return (
     <div
       id="basicLayout"
@@ -125,7 +132,7 @@ export default function BasicLayout({ children }: Props) {
         onMenuHeaderClick={(e) => console.log(e)}
         // 菜单项数据
         menuDataRender={() => {
-          return menus;
+          return getAccessibleMenus(loginUser, menus);
         }}
         menuItemRender={(item, dom) => (
           <Link
@@ -136,6 +143,8 @@ export default function BasicLayout({ children }: Props) {
           </Link>
         )}
       >
+        <MdEditor value={text} onChange={setText} />
+        <MdViewer value={text} />
         {children}
       </ProLayout>
     </div>

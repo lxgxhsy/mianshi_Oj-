@@ -7,6 +7,8 @@ import { Provider, useDispatch } from "react-redux";
 import store, { AppDispatch } from "@/stores";
 import { getLoginUserUsingGet } from "@/api/userController";
 import { setLoginUser } from "@/stores/loginUser";
+import AccessLayout from "@/access/AccessLayout";
+import ACCESS_ENUM from "@/access/accessEnum";
 
 const InitLayout: React.FC<Readonly<{
   children: React.ReactNode;
@@ -19,10 +21,10 @@ const InitLayout: React.FC<Readonly<{
       //更新全局用户状态
 
     } else {
-      setTimeout(() => {
-        const testUser = { userName: "测试登录", id: 1, userAvatar:"https://www.code-nav.cn/logo.png"}
-        dispatch(setLoginUser(testUser))
-      }, 3000)
+      // setTimeout(() => {
+      //   const testUser = { userName: "测试登录", id: 1, userAvatar: "https://www.code-nav.cn/logo.png", userRole: ACCESS_ENUM.ADMIN }
+      //   dispatch(setLoginUser(testUser))
+      // }, 3000)
     }
   }, [])
 
@@ -45,7 +47,7 @@ export default function RootLayout({
           <Provider store={store}>
             <InitLayout>
               <BasicLayout>
-                {children}
+                <AccessLayout>{children}</AccessLayout>
               </BasicLayout>
             </InitLayout>
           </Provider>
