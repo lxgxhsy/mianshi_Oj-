@@ -1,8 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-
 import request from "@/app/libs/request";
-
 
 /** addUser POST /api/user/add */
 export async function addUserUsingPost(

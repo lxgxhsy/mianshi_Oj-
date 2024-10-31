@@ -31,11 +31,20 @@ export const menus = [
         path: "/admin/user",
         name: "用户管理",
         access: ACCESS_ENUM.ADMIN,
-      }
+      },
+      {
+        path: "/admin/bank",
+        name: "题库管理",
+        access: ACCESS_ENUM.ADMIN,
+      },
+      {
+        path: "/admin/question",
+        name: "题目管理",
+        access: ACCESS_ENUM.ADMIN,
+      },
     ],
   },
 ] as MenuDataItem[];
-
 
 // 根据路径查找所有菜单
 export const findAllMenuItemByPath = (path: string): MenuDataItem | null => {
@@ -45,7 +54,7 @@ export const findAllMenuItemByPath = (path: string): MenuDataItem | null => {
 // 根据路径查找菜单
 export const findMenuItemByPath = (
   menus: MenuDataItem[],
-  path: string,
+  path: string
 ): MenuDataItem | null => {
   for (const menu of menus) {
     if (menu.path === path) {
@@ -60,5 +69,3 @@ export const findMenuItemByPath = (
   }
   return null;
 };
-
-

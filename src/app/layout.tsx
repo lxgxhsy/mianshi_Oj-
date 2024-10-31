@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
 import BasicLayout from "@/layouts/Basiclayout";
@@ -10,36 +10,32 @@ import { setLoginUser } from "@/stores/loginUser";
 import AccessLayout from "@/access/AccessLayout";
 import ACCESS_ENUM from "@/access/accessEnum";
 
-const InitLayout: React.FC<Readonly<{
-  children: React.ReactNode;
-}>
+const InitLayout: React.FC<
+  Readonly<{
+    children: React.ReactNode;
+  }>
 > = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const doInit = useCallback(async () => {
+  // 初始化全局用户状态
+  const doInitLoginUser = useCallback(async () => {
     const res = await getLoginUserUsingGet();
     if (res.data) {
-      //更新全局用户状态
-
-    } else {
-      // setTimeout(() => {
-      //   const testUser = { userName: "测试登录", id: 1, userAvatar: "https://www.code-nav.cn/logo.png", userRole: ACCESS_ENUM.ADMIN }
-      //   dispatch(setLoginUser(testUser))
-      // }, 3000)
+      // 更新全局用户状态
+      dispatch(setLoginUser(res.data));
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    doInit();
+    doInitLoginUser();
   }, []);
   return children;
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="zh">
       <body>
@@ -51,10 +47,8 @@ export default function RootLayout({
               </BasicLayout>
             </InitLayout>
           </Provider>
-
         </AntdRegistry>
       </body>
     </html>
   );
 }
-

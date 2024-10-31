@@ -1,5 +1,3 @@
-// @ts-ignore
-/* eslint-disable */
 import request from "@/app/libs/request";
 
 /** addQuestionBankQuestion POST /api/questionBankQuestion/add */
