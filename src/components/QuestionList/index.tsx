@@ -1,10 +1,12 @@
 "use client";
 import { Card, List, Tag } from "antd";
-import "./index.css";
 import Link from "next/link";
 import TagList from "../TagList";
+import "./index.css";
 
 interface Props {
+  questionBankId?: number;
+  cardTitle?: string;
   questionList: API.QuestionVO[];
 }
 
@@ -14,16 +16,26 @@ interface Props {
  * @constructor
  */
 const QuestionList = (props: Props) => {
-  const { questionList = [] } = props;
+  const { questionList = [], cardTitle, questionBankId } = props;
 
   return (
-    <Card className="question-list">
+    <Card className="question-list" title={cardTitle}>
       <List
         dataSource={questionList}
         renderItem={(item) => (
           <List.Item extra={<TagList tagList={item.tagList} />}>
             <List.Item.Meta
-              title={<Link href={`/question/${item.id}`}>{item.title}</Link>}
+              title={
+                <Link
+                  href={
+                    questionBankId
+                      ? `/bank/${questionBankId}/question/${item.id}`
+                      : `/question/${item.id}`
+                  }
+                >
+                  {item.title}
+                </Link>
+              }
             />
           </List.Item>
         )}

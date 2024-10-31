@@ -20,6 +20,7 @@
     "@umijs/route-utils": "^4.0.1",
     "@umijs/use-params": "^1.0.9",
     "axios": "^1.7.7",
+    "github-markdown-css": "^5.7.0",
     "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18",
