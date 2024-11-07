@@ -96,11 +96,11 @@ const UpdateBankModal: React.FC<Props> = (props) => {
                   questionBankId: value,
                 });
                 hide();
-                message.success("更新成功");
+                message.success("綁定題庫成功");
                 return true;
               } catch (error: any) {
                 hide();
-                message.error("更新失败，" + error.message);
+                message.error("綁定題庫失敗," + error.message);
                 return false;
               }
             }}
@@ -112,7 +112,7 @@ const UpdateBankModal: React.FC<Props> = (props) => {
                   questionBankId: value,
                 });
                 hide();
-                message.success("更新成功");
+                message.success("刪除題庫成功");
                 return true;
               } catch (error: any) {
                 hide();

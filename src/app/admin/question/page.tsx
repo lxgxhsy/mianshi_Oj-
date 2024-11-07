@@ -9,11 +9,14 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Button, message, Space, Typography } from "antd";
+import { Button, message, Popconfirm, Space, Table, Typography } from "antd";
 import React, { useRef, useState } from "react";
 import TagList from "@/components/TagList";
 import MdEditor from "@/components/MdEditor";
 import UpdateBankModal from "./components/UpdateBankModal";
+import BatchRemoveQuestionsFromBankModal from "./components/BatchRemoveQuestionsFromBankModal";
+import BatchAddQuestionsToBankModal from "./components/BatchAddQuestionsToBankModal";
+import { batchDeleteQuestionsUsingPost } from "@/api/questionBankQuestionController";
 
 /**
  * 题目管理页面
@@ -25,6 +28,21 @@ const QuestionAdminPage: React.FC = () => {
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
   // 是否显示更新窗口
   const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
+  // 是否显示批量向题库添加题目弹窗
+  const [
+    batchAddQuestionsToBankModalVisible,
+    setBatchAddQuestionsToBankModalVisible,
+  ] = useState<boolean>(false);
+  // 是否显示批量从题库移除题目弹窗
+  const [
+    batchRemoveQuestionsFromBankModalVisible,
+    setBatchRemoveQuestionsFromBankModalVisible,
+  ] = useState<boolean>(false);
+  // 当前选中的题目 id 列表
+  const [selectedQuestionIdList, setSelectedQuestionIdList] = useState<
+    number[]
+  >([]);
+
   // 是否显示更新所属题库窗口
   const [updateBankModalVisible, setUpdateBankModalVisible] =
     useState<boolean>(false);
@@ -53,6 +71,25 @@ const QuestionAdminPage: React.FC = () => {
       hide();
       message.error("删除失败，" + error.message);
       return false;
+    }
+  };
+
+  /**
+   * 批量删除
+   * @param questionIdList
+   */
+  const handleBatchDelete = async (questionIdList: number[]) => {
+    const hide = message.loading("正在操作");
+    try {
+      await batchDeleteQuestionsUsingPost({
+        questionIdList,
+      });
+      hide();
+      message.success("操作成功");
+      actionRef?.current?.reload();
+    } catch (error: any) {
+      hide();
+      message.error("操作失败，" + error.message);
     }
   };
 
@@ -194,12 +231,72 @@ const QuestionAdminPage: React.FC = () => {
     <PageContainer>
       <ProTable<API.Question>
         headerTitle={"查詢表格"}
-        rowKey="key"
+        rowKey="id"
         scroll={{
           x: true,
         }}
         search={{ labelWidth: 120 }}
         actionRef={actionRef}
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+          defaultSelectedRowKeys: [1],
+        }}
+        tableAlertRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          console.log(selectedRowKeys, selectedRows);
+          return (
+            <Space size={24}>
+              <span>
+                已选 {selectedRowKeys.length} 项
+                <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+                  取消选择
+                </a>
+              </span>
+            </Space>
+          );
+        }}
+        tableAlertOptionRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          return (
+            <Space size={16}>
+              <Button
+                onClick={() => {
+                  setSelectedQuestionIdList(selectedRowKeys as number[]);
+                  setBatchAddQuestionsToBankModalVisible(true);
+                }}
+              >
+                批量向题库添加题目
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelectedQuestionIdList(selectedRowKeys as number[]);
+                  setBatchRemoveQuestionsFromBankModalVisible(true);
+                }}
+              >
+                批量向题库移除题目
+              </Button>
+              <Popconfirm
+                title="确认删除"
+                description="你确定要删除这些题目吗？"
+                onConfirm={() => {
+                  handleBatchDelete(selectedRowKeys as number[]);
+                }}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button danger>批量删除题目</Button>
+              </Popconfirm>
+            </Space>
+          );
+        }}
         toolBarRender={() => [
           <Button
             type="primary"
@@ -260,6 +357,26 @@ const QuestionAdminPage: React.FC = () => {
         questionId={currentRow?.id}
         onCancel={() => {
           setUpdateBankModalVisible(false);
+        }}
+      />
+      <BatchAddQuestionsToBankModal
+        visible={batchAddQuestionsToBankModalVisible}
+        questionIdList={selectedQuestionIdList}
+        onSubmit={() => {
+          setBatchAddQuestionsToBankModalVisible(false);
+        }}
+        onCancel={() => {
+          setBatchAddQuestionsToBankModalVisible(false);
+        }}
+      />
+      <BatchRemoveQuestionsFromBankModal
+        visible={batchRemoveQuestionsFromBankModalVisible}
+        questionIdList={selectedQuestionIdList}
+        onSubmit={() => {
+          setBatchRemoveQuestionsFromBankModalVisible(false);
+        }}
+        onCancel={() => {
+          setBatchRemoveQuestionsFromBankModalVisible(false);
         }}
       />
     </PageContainer>

@@ -2,7 +2,10 @@
 import Title from "antd/es/typography/Title";
 import { listQuestionBankVoByPageUsingPost } from "@/api/questionBankController";
 import "./index.css";
-import { listQuestionVoByPageUsingPost } from "@/api/questionController";
+import {
+  listQuestionVoByPageUsingPost,
+  searchQuestionVoByPageUsingPost,
+} from "@/api/questionController";
 import QuestionTable from "@/components/QuestionTable";
 
 /**
@@ -19,8 +22,8 @@ export default async function QuestionsPage({ searchParams }) {
   let total = 0;
 
   try {
-    const questionRes = await listQuestionVoByPageUsingPost({
-      title: searchText,
+    const questionRes = await searchQuestionVoByPageUsingPost({
+      searchText,
       pageSize,
       sortField: "createTime",
       sortOrder: "descend",
